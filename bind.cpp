@@ -1,5 +1,6 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
+#include <pybind11/operators.h>
 #include "MatrixOps.cpp"
 #include <vector>
 
@@ -24,6 +25,7 @@ PYBIND11_MODULE(MatrixOps, m) {
         .def("__mul__", &Operational1D::multiplyConstant)
         .def("__truediv__", &Operational1D::divideConstant)
         .def("__floordiv__", &Operational1D::intdivideConstant)
+        .def("__len__", &Operational1D::length)
         .def("T", &Operational1D::T)
         .def("transpose", &Operational1D::T)
         .def("det", &Operational1D::det)

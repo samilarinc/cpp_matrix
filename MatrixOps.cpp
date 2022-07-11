@@ -5,6 +5,7 @@
 #include <vector>
 #include <math.h>
 #include <string>
+#include <cstring>
 
 using namespace std;
 
@@ -48,6 +49,11 @@ class Operational1D{
         this->arr = vec;
         shape.first = height;
         shape.second = width;
+    }
+
+    size_t length()
+    {
+        return height * width;
     }
 
     double at(pair<int, int> p)
@@ -275,9 +281,7 @@ class Operational1D{
     Operational1D copy()
     {
         double* temp = new double[height*width];
-        for(int i = 0; i < height*width; i++){
-            temp[i] = arr[i];
-        }
+        memcpy(temp, arr, height*width*sizeof(double));
         return Operational1D(temp, height, width);
     }
 
@@ -324,6 +328,15 @@ class Operational1D{
             return adjoint().multiplyConstant(1/determinant);
         }
     }
+
+    // vector<double> to_list()
+    // {
+    //     vector<double> temp();
+    //     for(int i = 0; i < height*width; i++){
+    //         temp.push_back(arr[i]);
+    //     }
+    //     return temp;
+    // }
 
 
     double* arr;
