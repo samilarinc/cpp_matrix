@@ -6,43 +6,45 @@
 #include <math.h>
 #include <string>
 #include <cstring>
+#include <stdexcept>
 
 using namespace std;
 
+template <typename T>
 class Operational1D{
     public:
 
-    Operational1D(vector<vector<double>> vec)
+    Operational1D(vector<vector<T>> vec)
     {
         height = vec.size();
         width = vec[0].size();
         shape.first = height;
         shape.second = width;
-        double* temp = new double[height*width];
+        T* temp = new T[height*width];
         
-        for(int i = 0; i < height; i++){
-            for(int j = 0; j < width; j++){
+        for(size_t i = 0; i < height; i++){
+            for(size_t j = 0; j < width; j++){
                 temp[i * height + j] = vec[i][j];
             }
         }
         arr = temp;
     }
 
-    Operational1D(vector<double> vec)
+    Operational1D(vector<T> vec)
     {
         height = 1;
         width = vec.size();
         shape.first = height;
         shape.second = width;
-        double* temp = new double[height*width];
+        T* temp = new T[height*width];
         
-        for(int j = 0; j < width; j++){
+        for(size_t j = 0; j < width; j++){
             temp[j] = vec[j];
         }
         arr = temp;
     }
 
-    Operational1D(double* vec, int height, int width)
+    Operational1D(T* vec, size_t height, size_t width)
     {
         this->height = height;
         this->width = width;
@@ -56,52 +58,52 @@ class Operational1D{
         return height * width;
     }
 
-    double at(pair<int, int> p)
+    T at(pair<size_t, size_t> p)
     {
-        int i = p.first;
-        int j = p.second;
+        size_t i = p.first;
+        size_t j = p.second;
         if(i >= height || j >= width){
-            cout << "Error: Index out of bounds" << endl;
+            throw std::exception("Index out of bounds");
             return 0;
         }
         return arr[i * width + j];
     }
     
-    void set(pair<int, int> p, double value)
+    void set(pair<size_t, size_t> p, T value)
     {
-        int i = p.first;
-        int j = p.second;
+        size_t i = p.first;
+        size_t j = p.second;
         if(i >= height || j >= width){
-            cout << "Error: Index out of bounds" << endl;
+            throw std::exception("Index out of bounds");
             return;
         }
         arr[i * width + j] = value;
     }
 
-    Operational1D at(int i)
+    Operational1D at(size_t i)
     {
-        vector<double> temp;
-        for(int j = 0; j < width; j++){
+        vector<T> temp;
+        for(size_t j = 0; j < width; j++){
             temp.push_back(arr[i * width + j]);
         }
         return Operational1D(temp);
     }
 
-    void set(int i, vector<double> value)
+    void set(size_t i, vector<T> value)
     {
-        for(int j = 0; j < width; j++){
+        for(size_t j = 0; j < width; j++){
             arr[i * width + j] = value[j];
         }
     }
     
     Operational1D addMatrix(Operational1D vec2)
     {
-        double* temp = new double[height*width];
+        T* temp = new T[height*width];
         if(vec2.width != width || vec2.height != height){
-            printf("Matrix dimensions must agree!");
-            exit(1);
+            throw std::exception("Matrix dimensions must agree!");
+            return vec2;
         }
-        for(int i = 0; i < height*width; i++){
+        for(size_t i = 0; i < height*width; i++){
             temp[i] = arr[i] + vec2.arr[i];
         }
         return Operational1D(temp, height, width);
@@ -109,12 +111,12 @@ class Operational1D{
 
     Operational1D substractMatrix(Operational1D vec2)
     {
-        double* temp = new double[height*width];
+        T* temp = new T[height*width];
         if(vec2.width != width || vec2.height != height){
-            printf("Matrix dimensions must agree!");
-            exit(1);
+            throw std::exception("Matrix dimensions must agree!");
+            return vec2;
         }
-        for(int i = 0; i < height*width; i++){
+        for(size_t i = 0; i < height*width; i++){
             temp[i] = arr[i] - vec2.arr[i];
         }
         return Operational1D(temp, height, width);
@@ -122,12 +124,12 @@ class Operational1D{
 
     Operational1D multiplyMatrix(Operational1D vec2)
     {
-        double* temp = new double[height*width];
+        T* temp = new T[height*width];
         if(vec2.width != width || vec2.height != height){
-            printf("Matrix dimensions must agree!");
-            exit(1);
+            throw std::exception("Matrix dimensions must agree!");
+            return vec2;
         }
-        for(int i = 0; i < height*width; i++){
+        for(size_t i = 0; i < height*width; i++){
             temp[i] = arr[i] * vec2.arr[i];
         }
         return Operational1D(temp, height, width);
@@ -135,12 +137,12 @@ class Operational1D{
 
     Operational1D divideMatrix(Operational1D vec2)
     {
-        double* temp = new double[height*width];
+        T* temp = new T[height*width];
         if(vec2.width != width || vec2.height != height){
-            printf("Matrix dimensions must agree!");
-            exit(1);
+            throw std::exception("Matrix dimensions must agree!");
+            return vec2;
         }
-        for(int i = 0; i < height*width; i++){
+        for(size_t i = 0; i < height*width; i++){
             temp[i] = arr[i] / vec2.arr[i];
         }
         return Operational1D(temp, height, width);
@@ -148,12 +150,12 @@ class Operational1D{
 
     Operational1D intdivideMatrix(Operational1D vec2)
     {
-        double* temp = new double[height*width];
+        T* temp = new T[height*width];
         if(vec2.width != width || vec2.height != height){
-            printf("Matrix dimensions must agree!");
-            exit(1);
+            throw std::exception("Matrix dimensions must agree!");
+            return vec2;
         }
-        for(int i = 0; i < height*width; i++){
+        for(size_t i = 0; i < height*width; i++){
             temp[i] = (int) (arr[i] / vec2.arr[i]);
         }
         return Operational1D(temp, height, width);
@@ -161,15 +163,15 @@ class Operational1D{
 
     Operational1D atMatrix(Operational1D vec2)
     {
-        double* temp = new double[vec2.width*height];
+        T* temp = new T[vec2.width*height];
         if(width != vec2.height || height != vec2.width){
-            printf("Multiplication requirements not satisfied!");
-            exit(1);
+            throw std::exception("Matrix dimensions must agree!");
+            return vec2;
         }
-        for(int i = 0; i < height; i++){
-            for(int q = 0; q < height; q++){
-                double subtotal = 0;
-                for(int j = 0; j < width; j++){
+        for(size_t i = 0; i < height; i++){
+            for(size_t q = 0; q < height; q++){
+                T subtotal = 0;
+                for(size_t j = 0; j < width; j++){
                     subtotal += arr[i*height + j] * vec2.arr[j*height+q];
                 }
                 temp[i*height + q] = subtotal;
@@ -178,46 +180,46 @@ class Operational1D{
         return Operational1D(temp, height, vec2.width);
     }
 
-    Operational1D addConstant(double constant)
+    Operational1D addConstant(T constant)
     {
-        double* temp = new double[height*width];
-        for(int i = 0; i < height*width; i++){
+        T* temp = new T[height*width];
+        for(size_t i = 0; i < height*width; i++){
             temp[i] = arr[i] + constant;
         }
         return Operational1D(temp, height, width);
     }
 
-    Operational1D subtractConstant(double constant)
+    Operational1D subtractConstant(T constant)
     {
-        double* temp = new double[height*width];
-        for(int i = 0; i < height*width; i++){
+        T* temp = new T[height*width];
+        for(size_t i = 0; i < height*width; i++){
             temp[i] = arr[i] - constant;
         }
         return Operational1D(temp, height, width);
     }
 
-    Operational1D multiplyConstant(double constant)
+    Operational1D multiplyConstant(T constant)
     {
-        double* temp = new double[height*width];
-        for(int i = 0; i < height*width; i++){
+        T* temp = new T[height*width];
+        for(size_t i = 0; i < height*width; i++){
             temp[i] = arr[i] * constant;
         }
         return Operational1D(temp, height, width);
     }
 
-    Operational1D divideConstant(double constant)
+    Operational1D divideConstant(T constant)
     {
-        double* temp = new double[height*width];
-        for(int i = 0; i < height*width; i++){
+        T* temp = new T[height*width];
+        for(size_t i = 0; i < height*width; i++){
             temp[i] = arr[i] / constant;
         }
         return Operational1D(temp, height, width);
     }
 
-    Operational1D intdivideConstant(double constant)
+    Operational1D intdivideConstant(T constant)
     {
-        double* temp = new double[height*width];
-        for(int i = 0; i < height*width; i++){
+        T* temp = new T[height*width];
+        for(size_t i = 0; i < height*width; i++){
             temp[i] = (int) (arr[i] / constant);
         }
         return Operational1D(temp, height, width);
@@ -226,8 +228,8 @@ class Operational1D{
     string printMatrix()
     {
         string temp;
-        for(int i = 0; i < height; i++){
-            for(int j = 0; j < width; j++){
+        for(size_t i = 0; i < height; i++){
+            for(size_t j = 0; j < width; j++){
                 temp += to_string(arr[i*width + j]) + " ";
             }
             temp += '\n';
@@ -237,19 +239,19 @@ class Operational1D{
 
     Operational1D T()
     {
-        double* temp = new double[width*height];
-        for(int i = 0; i < height*width; i++){
+        T* temp = new T[width*height];
+        for(size_t i = 0; i < height*width; i++){
             temp[i/height + width*(i%height)] = arr[i];
         }
         return Operational1D(temp, width, height);
     }
 
-    double det()
+    T det()
     {
-        double determinant = 0;
+        T determinant = 0;
         if(height != width){
-            printf("Matrix is not square!\n");
-            return -1;
+            throw std::exception("Matrix is not square!");
+            return 0;
         }
         else if(height == 1){
             return arr[0];
@@ -258,13 +260,13 @@ class Operational1D{
             return arr[0]*arr[3] - arr[1]*arr[2];
         }
         else{
-            vector<vector<double>> tempo(height-1, vector<double>(height-1, 0));
-            Operational1D temp(tempo); 
+            vector<vector<T>> temp_vector(height-1, vector<T>(height-1, 0));
+            Operational1D temp(temp_vector); 
             temp.width = height-1;
             temp.height = height-1;
-            for(int i = 0; i < height; i++){
-                for(int k = 1; k < height; k++){
-                    for(int j = 0, q = 0; j < height; q++, j++){
+            for(size_t i = 0; i < height; i++){
+                for(size_t k = 1; k < height; k++){
+                    for(size_t j = 0, q = 0; j < height; q++, j++){
                         if(i == j){
                             q--;
                             continue;
@@ -272,7 +274,9 @@ class Operational1D{
                         temp.arr[(k-1)*temp.height + q] = arr[k*height + j];
                     }
                 }
-                determinant += pow(-1, i) * arr[i] * temp.det();
+                T temp_determinant = temp.det() * arr[i];
+                temp_determinant = (i%2 == 0) ? temp_determinant : -temp_determinant;
+                determinant += temp_determinant;
             }
         }
         return determinant;
@@ -280,20 +284,20 @@ class Operational1D{
 
     Operational1D copy()
     {
-        double* temp = new double[height*width];
-        memcpy(temp, arr, height*width*sizeof(double));
+        T* temp = new T[height*width];
+        memcpy(temp, arr, height*width*sizeof(T));
         return Operational1D(temp, height, width);
     }
 
-    double cofactor(int i, int j)
+    T cofactor(size_t i, size_t j)
     {
-        vector<vector<double>> temp(width - 1, vector<double>(height - 1, 0));
-        for(int k = 0, m = 0; k < width; k++, m++){
+        vector<vector<T>> temp(width - 1, vector<T>(height - 1, 0));
+        for(size_t k = 0, m = 0; k < width; k++, m++){
             if(k == i){
                 m--;
                 continue;
             }
-            for(int l = 0, q = 0; l < height; q++, l++){
+            for(size_t l = 0, q = 0; l < height; q++, l++){
                 if(l == j){
                     q--;
                     continue;
@@ -302,15 +306,15 @@ class Operational1D{
             }
         }
         Operational1D temp2(temp);
-        int sign = pow(-1, i+j);
+        int sign = ((i+j)%2 == 0) ? 1 : -1;
         return temp2.det() * sign;
     }
 
     Operational1D adjoint()
     {
-        vector<vector<double>> temp(height, vector<double>(width, 0));
-        for(int i = 0; i < height; i++){
-            for(int j = 0; j < width; j++){
+        vector<vector<T>> temp(height, vector<T>(width, 0));
+        for(size_t i = 0; i < height; i++){
+            for(size_t j = 0; j < width; j++){
                 temp[i][j] = cofactor(i, j);
             }
         }
@@ -319,27 +323,17 @@ class Operational1D{
 
     Operational1D inverse()
     {
-        double determinant = det();
+        T determinant = det();
         if(determinant == 0){
-            printf("Matrix is not invertible!\n");
-            exit(1);
+            throw std::exception("Matrix is not invertible!\n");
+            return Operational1D(arr, height, width);
         }
         else{
             return adjoint().multiplyConstant(1/determinant);
         }
     }
 
-    // vector<double> to_list()
-    // {
-    //     vector<double> temp();
-    //     for(int i = 0; i < height*width; i++){
-    //         temp.push_back(arr[i]);
-    //     }
-    //     return temp;
-    // }
-
-
-    double* arr;
+    T* arr;
     size_t width;
     size_t height;
     pair<size_t, size_t> shape;
